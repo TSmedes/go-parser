@@ -11,7 +11,7 @@ import (
 
 	Syntax Analyzer
 */
-func syntax(tokens []string, outputType string) {
+func syntax(tokens []string) {
 
 	tokens = stmtList(tokens)
 	if len(tokens) > 0 {

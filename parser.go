@@ -43,18 +43,19 @@ func main() {
 	tokens := lexer(string(text))
 
 	//Syntactical Analysis
-	syntax(tokens, outputType)
+	syntax(tokens)
 
 	//Adjust comments for scheme or prolog output
 	if outputType[1] == 's' {
 		fmt.Println("; processing input file", fileName)
 		fmt.Println("; Lexical and Syntax analysis passed")
 		fmt.Println("; Generating Scheme Code")
-		fmt.Println(schemeGenerator(tokens))
+		fmt.Println(codeGenerator(tokens, "s"))
 	} else {
 		fmt.Println("/* processing input file", fileName)
-		fmt.Println("Lexical and Syntax analysis passed")
-		fmt.Println("Generating Prolog Code */")
+		fmt.Println("   Lexical and Syntax analysis passed")
+		fmt.Println("   Generating Prolog Code */")
+		fmt.Println(codeGenerator(tokens, "p"))
 	}
 
 	os.Exit(0)

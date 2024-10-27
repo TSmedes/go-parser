@@ -8,6 +8,12 @@ import (
 	"strings"
 )
 
+/*
+Main function
+Purpose: this program accepts a file with 4Point grammar
+and checks it lexically and syntactically. It then converts it
+to either scheme or prolog code.
+*/
 func main() {
 	// Check if the user has provided the correct number of arguments
 	if len(os.Args) < 3 {
@@ -63,6 +69,7 @@ func main() {
 	os.Exit(0)
 }
 
+// Reserved words and characters and their respective token
 var lexemes = map[string]string{
 	"point":    "POINT",
 	";":        "SEMICOLON",
@@ -86,6 +93,9 @@ var idRegexp = regexp.MustCompile(`^[a-z]+`)
 *
 
 	Lexical Analyzer
+	Purpose: The lexical analyzer parses teh input file and
+	searches for valid characters and lexemes and generates a
+	list of tokens
 */
 func lexer(input string) []string {
 	tokens := []string{}
@@ -134,13 +144,16 @@ func lexer(input string) []string {
 func syntax(tokens []string) {
 
 	tokens = stmtList(tokens)
+	// Extra tokens after grammar is complete breaks the grammatical rules
 	if len(tokens) > 0 {
 		fmt.Println("Syntax error: Unknown symbols after program end .:", tokens[0])
 		os.Exit(1)
-		//ERROR
 	}
 }
 
+/*
+Checks grammar for STMT_LIST
+*/
 func stmtList(tokens []string) []string {
 	tokens = stmt(tokens)
 	if tokens[0] == "PERIOD" {
@@ -156,6 +169,9 @@ func stmtList(tokens []string) []string {
 	return tokens
 }
 
+/*
+Checks grammar for STMT
+*/
 func stmt(tokens []string) []string {
 
 	if tokens[0] == "ID" {
@@ -170,13 +186,10 @@ func stmt(tokens []string) []string {
 	return tokens
 }
 
+/*
+Checks grammar for POINT_DEF
+*/
 func pointDef(tokens []string) []string {
-	// if tokens[0] != "ID" {
-	// 	fmt.Println("Syntax error:", tokens[0], "found, ID expected")
-	// 	os.Exit(1)
-	// }
-	// tokens = tokens[1:]
-
 	tokens = id(tokens)
 
 	if tokens[0] != "ASSIGN" {
@@ -197,7 +210,6 @@ func pointDef(tokens []string) []string {
 	if tokens[0] != "COMMA" {
 		fmt.Println("Syntax error:", tokens[0], "found, , expected")
 		os.Exit(1)
-		//ERROR
 	}
 
 	tokens = tokens[1:]
@@ -211,16 +223,17 @@ func pointDef(tokens []string) []string {
 	return tokens[1:]
 }
 
+/*
+Checks grammar for TEST
+*/
 func test(tokens []string) []string {
 	if tokens[0] != "TEST" {
 		fmt.Println("Syntax error:", tokens[0], "found, test expected")
 		os.Exit(1)
-		//ERROR
 	}
 	if tokens[1] != "LPAREN" {
 		fmt.Println("Syntax error:", tokens[1], "found, ( expected")
 		os.Exit(1)
-		//ERROR
 	}
 
 	tokens = tokens[2:]
@@ -229,7 +242,6 @@ func test(tokens []string) []string {
 	if tokens[0] != "COMMA" {
 		fmt.Println("Syntax error:", tokens[0], "found, , expected")
 		os.Exit(1)
-		//ERROR
 	}
 
 	tokens = tokens[1:]
@@ -237,12 +249,14 @@ func test(tokens []string) []string {
 	if tokens[0] != "RPAREN" {
 		fmt.Println("Syntax error:", tokens[0], "found, ) expected")
 		os.Exit(1)
-		//ERROR
 	}
 
 	return tokens[1:]
 }
 
+/*
+Checks grammar for ID
+*/
 func id(tokens []string) []string {
 	if tokens[0] != "ID" {
 		fmt.Println("Syntax error: Invalid variable name found:", tokens[0])
@@ -251,11 +265,13 @@ func id(tokens []string) []string {
 	if !alpha {
 		fmt.Println("Syntax error: Invalid variable name found:", tokens[1])
 		os.Exit(1)
-		//ERROR
 	}
 	return tokens[2:]
 }
 
+/*
+Checks grammar for NUMS
+*/
 func nums(tokens []string) []string {
 	if tokens[0] != "NUM" {
 		fmt.Println("Syntax error:", tokens[0], "found, integer expected")
@@ -270,15 +286,20 @@ func nums(tokens []string) []string {
 	return tokens[2:]
 }
 
+/*
+Checks grammar for OPTION
+*/
 func options(tokens []string) []string {
 	if tokens[0] != "TRIANGLE" && tokens[0] != "SQUARE" {
 		fmt.Println("Syntax error:", tokens[0], "found, triangle or square expected")
 		os.Exit(1)
-		//ERROR
 	}
 	return tokens[1:]
 }
 
+/*
+Checks grammar for POINT_LIST
+*/
 func pointList(tokens []string) []string {
 	tokens = id(tokens)
 	if tokens[0] == "COMMA" {

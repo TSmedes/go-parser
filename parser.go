@@ -312,6 +312,19 @@ func pointList(tokens []string) []string {
 /*
 *
 
+	Contains
+	Purpose: Used to determine if a slice contains a value
+*/
+func contains(s map[string][]string, key string) bool {
+	if _, ok := s[key]; ok {
+		return true
+	}
+	return false
+}
+
+/*
+*
+
 	codeGenerator
 	purpose: Generates the output code in the desired language
 	from the input flag (scheme or prolog)
@@ -360,7 +373,13 @@ func codeGenerator(tokens []string, outputType string) string {
 			shape = shape[1:]
 			// Iterate through params in test
 			for _, param := range shape {
-				code += " (make-point " + points[param][0] + " " + points[param][1] + ")"
+				if contains(points, param) {
+					code += " (make-point " + points[param][0] + " " + points[param][1] + ")"
+				} else {
+					fmt.Println("Semantic Error: point", param, "not found")
+					os.Exit(1)
+				}
+
 			}
 			code += ")\n"
 		}
@@ -382,9 +401,19 @@ func codeGenerator(tokens []string, outputType string) string {
 			for _, param := range shape {
 				comment += ", " + param
 				if shapeType == "SQUARE" {
-					testCode += "point2d(" + points[param][0] + ", " + points[param][1] + "), "
+					if contains(points, param) {
+						testCode += "point2d(" + points[param][0] + ", " + points[param][1] + "), "
+					} else {
+						fmt.Println("Semantic Error: point", param, "not found")
+						os.Exit(1)
+					}
 				} else {
-					code2 += "point2d(" + points[param][0] + ", " + points[param][1] + "), "
+					if contains(points, param) {
+						code2 += "point2d(" + points[param][0] + ", " + points[param][1] + "), "
+					} else {
+						fmt.Println("Semantic Error: point", param, "not found")
+						os.Exit(1)
+					}
 				}
 
 			}
